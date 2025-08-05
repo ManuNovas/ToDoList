@@ -11,15 +11,40 @@ const todoController = {
                 description: description,
             }], {
                 aggregateErrors: true,
-            }).then(todo => {
-                response.json(todo);
-                user.todos.push(todo._id);
+            }).then(todos => {
+                response.json(todos[0]);
+                user.todos.push(todos[0]._id);
             });
         }catch(error){
             console.log(error);
             response.status(500).send("Ocurrió un problema al dar de alta la tarea.");
         }
     },
+    update: function(request, response){
+        const user = request.user;
+        const {id} = request.params;
+        const {title, description} = request.body;
+        try{
+            Todo.findOneAndUpdate({
+                _id: id,
+                user: user._id,
+            }, {
+                title: title,
+                description: description
+            }, {
+                new: true,
+            }).then(todo => {
+                if(todo){
+                    response.json(todo);
+                }else{
+                    response.status(404).send("La tarea no existe.");
+                }
+            });
+        }catch(error){
+            console.log(error);
+            response.status(500).send("Ocurrió un error al actualizar la tarea.");
+        }
+    }
 };
 
 module.exports = todoController;

@@ -17,7 +17,9 @@ const userController = {
                 name: name,
                 email: email,
                 password: hashedPassword,
-            }]).then(user => {
+            }], {
+                aggregateErrors: true,
+            }).then(user => {
                 response.json({
                     token: userController.generateToken(user),
                 });
