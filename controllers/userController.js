@@ -30,6 +30,27 @@ const userController = {
             response.status(500).send("Ocurrió un error al crear al usuario.");
         });
     },
+    login: function(request, response){
+        const {email, password} = request.body;
+        try{
+            User.findOne({
+                email: email,
+            }).then(user => {
+                bcrypt.compare(password, user.password).then(match => {
+                    if(match){
+                        response.json({
+                            token: userController.generateToken(user),
+                        });
+                    }else{
+                        response.status(401).send("Las credenciales no son correctas.");
+                    }
+                });
+            });
+        }catch(error){
+            console.log(error);
+            response.status(500).send("Ocurrió un problema al iniciar sesión");
+        }
+    }
 };
 
 module.exports = userController;
