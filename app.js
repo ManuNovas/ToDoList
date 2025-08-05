@@ -7,6 +7,9 @@ var app = express();
 
 const dotenv = require('dotenv');
 const usersRouter = require('./routes/users');
+const todosRouter = require('./routes/todos');
+
+const checkToken = require('./middleware/checkToken');
 
 dotenv.config();
 
@@ -20,5 +23,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', usersRouter);
+app.use('/todos', checkToken, todosRouter);
 
 module.exports = app;

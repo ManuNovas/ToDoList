@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const {Schema} = require("mongoose");
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -17,6 +18,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         maxLength: 128,
     },
+    todos: [{
+        type: Schema.Types.ObjectId,
+        ref: "Todo"
+    }],
 }, {
     timestamps: true,
 });
