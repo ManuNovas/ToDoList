@@ -44,7 +44,28 @@ const todoController = {
             console.log(error);
             response.status(500).send("Ocurrió un error al actualizar la tarea.");
         }
-    }
+    },
+    delete: function(request, response){
+        const user = request.user;
+        const {id} = request.params;
+        try{
+            Todo.findOneAndDelete({
+                _id: id,
+                user: user._id,
+            }, {
+                new: true,
+            }).then(todo => {
+                if(todo){
+                    response.status(204).json(todo);
+                }else{
+                    response.status(404).send("La tarea no existe.");
+                }
+            });
+        }catch(error){
+            console.log(error);
+            response.status(500).send("Ocurrió un error al eliminar la tarea.");
+        }
+    },
 };
 
 module.exports = todoController;
