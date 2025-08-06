@@ -19,6 +19,7 @@ const userController = {
                 password: hashedPassword,
             }], {
                 aggregateErrors: true,
+                new: true,
             }).then(user => {
                 response.json({
                     token: userController.generateToken(user),

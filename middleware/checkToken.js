@@ -14,7 +14,7 @@ function checkToken(request, response, next){
                 request.user = user;
                 next();
             }else{
-                throw new Error("El usuario no existe.");
+                response.status(401).send("El token no es válido.");
             }
         });
     }catch(error){

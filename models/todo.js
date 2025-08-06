@@ -19,6 +19,15 @@ const todoSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true,
+    toJSON: {
+        transform: (doc, ret) => {
+            return {
+                id: ret._id,
+                title: ret.title,
+                description: ret.description,
+            }
+        }
+    }
 });
 
 module.exports = mongoose.model("Todo", todoSchema);

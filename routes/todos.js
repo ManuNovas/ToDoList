@@ -9,5 +9,6 @@ const deleteRequest = require("../requests/todo/deleteRequest");
 router.post("/", createRequest, todoController.create);
 router.put("/:id", updateRequest, todoController.update);
 router.delete("/:id", deleteRequest, todoController.delete);
+router.get("/", todoController.list);
 
 module.exports = router;

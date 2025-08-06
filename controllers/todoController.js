@@ -66,6 +66,35 @@ const todoController = {
             response.status(500).send("Ocurrió un error al eliminar la tarea.");
         }
     },
+    list: function(request, response){
+        const user = request.user;
+        const page = parseInt(request.query.page || 1);
+        const limit = parseInt(request.query.limit || 10);
+        const skip = (page - 1) * limit;
+        try{
+            Todo.find({
+                user: user._id,
+            }).limit(limit).skip(skip).then(todos => {
+                if(todos.length > 0){
+                    Todo.countDocuments({
+                        user: user._id,
+                    }).then(total => {
+                        response.json({
+                            "data": todos,
+                            "page": page,
+                            "limit": limit,
+                            "total": total,
+                        });
+                    })
+                }else{
+                    response.status(404).send("No hay tareas.");
+                }
+            });
+        }catch(error){
+            console.log(error);
+            response.status(500).send("Ocurrió un error al listar las tareas.");
+        }
+    }
 };
 
 module.exports = todoController;
