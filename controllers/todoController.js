@@ -68,17 +68,43 @@ const todoController = {
     },
     list: function(request, response){
         const user = request.user;
-        const page = parseInt(request.query.page || 1);
-        const limit = parseInt(request.query.limit || 10);
+        const page = parseInt(request.query.page) || 1;
+        const limit = parseInt(request.query.limit) || 10;
         const skip = (page - 1) * limit;
+        const search = request.query.search;
+        const sort = parseInt(request.query.sort) || 1;
+        const order = parseInt(request.query.order) || 1;
+        let filters, field;
         try{
-            Todo.find({
+            filters = {
                 user: user._id,
-            }).limit(limit).skip(skip).then(todos => {
+            };
+            if(search){
+                filters.$or = [
+                    {title: {$regex: search, $options: "i"}},
+                    {description: {$regex: search, $options: "i"}}
+                ];
+            }
+            switch(sort){
+                case 2:
+                    field = "title";
+                    break;
+                case 3:
+                    field = "description";
+                    break;
+                default:
+                    field = "_id";
+                    break;
+            }
+            Todo.find(filters, null, {
+                limit: limit,
+                skip: skip,
+                sort: {
+                    [field]: order
+                }
+            }).then(todos => {
                 if(todos.length > 0){
-                    Todo.countDocuments({
-                        user: user._id,
-                    }).then(total => {
+                    Todo.countDocuments(filters).then(total => {
                         response.json({
                             "data": todos,
                             "page": page,
