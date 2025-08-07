@@ -12,32 +12,32 @@ const userController = {
     },
     create: function(request, response){
         const {name, email, password} = request.body;
-        bcrypt.hash(password, 10).then(hashedPassword => {
-            User.create([{
-                name: name,
-                email: email,
-                password: hashedPassword,
-            }], {
-                aggregateErrors: true,
-                new: true,
-            }).then(user => {
-                response.json({
-                    token: userController.generateToken(user[0]),
+        try{
+            bcrypt.hash(password, 10).then(hashedPassword => {
+                User.create([{
+                    name: name,
+                    email: email,
+                    password: hashedPassword,
+                }], {
+                    new: true,
+                }).then(user => {
+                    response.json({
+                        token: userController.generateToken(user[0]),
+                    });
                 });
-            }).catch(error => {
-                console.log(error);
-                response.status(500).send("Ocurrió un error al crear al usuario.");
             });
-        }).catch(error => {
+        }catch(error){
             console.log(error);
             response.status(500).send("Ocurrió un error al crear al usuario.");
-        });
+        }
     },
     login: function(request, response){
         const {email, password} = request.body;
         try{
             User.findOne({
                 email: email,
+            }, null, {
+                new: true,
             }).then(user => {
                 if(user){
                     bcrypt.compare(password, user.password).then(match => {
