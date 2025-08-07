@@ -22,7 +22,7 @@ const userController = {
                 new: true,
             }).then(user => {
                 response.json({
-                    token: userController.generateToken(user),
+                    token: userController.generateToken(user[0]),
                 });
             }).catch(error => {
                 console.log(error);
@@ -39,15 +39,19 @@ const userController = {
             User.findOne({
                 email: email,
             }).then(user => {
-                bcrypt.compare(password, user.password).then(match => {
-                    if(match){
-                        response.json({
-                            token: userController.generateToken(user),
-                        });
-                    }else{
-                        response.status(401).send("Las credenciales no son correctas.");
-                    }
-                });
+                if(user){
+                    bcrypt.compare(password, user.password).then(match => {
+                        if(match){
+                            response.json({
+                                token: userController.generateToken(user),
+                            });
+                        }else{
+                            response.status(401).send("Las credenciales no son correctas.");
+                        }
+                    });
+                }else{
+                    response.status(400).send("El usuario no está registrado.");
+                }
             });
         }catch(error){
             console.log(error);
