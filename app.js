@@ -10,6 +10,7 @@ const usersRouter = require('./routes/users');
 const todosRouter = require('./routes/todos');
 
 const checkToken = require('./middleware/checkToken');
+const limiter = require('./middleware/limiter');
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(limiter);
 
 app.use('/users', usersRouter);
 app.use('/todos', checkToken, todosRouter);

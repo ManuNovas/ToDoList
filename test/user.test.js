@@ -1,17 +1,13 @@
+require("dotenv").config({path: "./.env.test"});
+process.env.NODE_ENV = "test";
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../app");
-const dotenv = require("dotenv");
-const connectDB = require("../config/database");
 const User = require("../models/User");
 let expect;
 
-dotenv.config({
-    path: "./.env.test"
-});
 chai.use(chaiHttp);
 expect = chai.expect;
-connectDB();
 
 describe("Integration test for user management", () => {
     before(async () => {
