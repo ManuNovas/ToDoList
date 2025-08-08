@@ -3,11 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const userController = {
-    generateToken: function(user){
+    generateToken: function(userData, expiresIn = "1h"){
         return jwt.sign({
-            username: user.email
+            username: userData,
         }, process.env.JWT_SECRET, {
-            expiresIn: "1h"
+            expiresIn: expiresIn,
         });
     },
     create: function(request, response){
@@ -22,7 +22,8 @@ const userController = {
                     new: true,
                 }).then(user => {
                     response.json({
-                        token: userController.generateToken(user[0]),
+                        token: userController.generateToken(user[0].email),
+                        refreshToken: userController.generateToken(user[0]._id, "1d"),
                     });
                 });
             });
@@ -43,7 +44,8 @@ const userController = {
                     bcrypt.compare(password, user.password).then(match => {
                         if(match){
                             response.json({
-                                token: userController.generateToken(user),
+                                token: userController.generateToken(user.email),
+                                refreshToken: userController.generateToken(user._id, "1d"),
                             });
                         }else{
                             response.status(401).send("Las credenciales no son correctas.");
@@ -57,7 +59,19 @@ const userController = {
             console.log(error);
             response.status(500).send("Ocurrió un problema al iniciar sesión");
         }
-    }
+    },
+    refreshToken: function(request, response){
+        const user = request.user;
+        try{
+            response.json({
+                token: userController.generateToken(user.email),
+                refreshToken: userController.generateToken(user._id, "1d"),
+            });
+        }catch(error){
+            console.log(error);
+            response.status(500).send("Ocurrió un error al refrescar el token.");
+        }
+    },
 };
 
 module.exports = userController;

@@ -1,10 +1,11 @@
 require("dotenv").config({path: "./.env.test"});
 process.env.NODE_ENV = "test";
+
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../app");
 const User = require("../models/User");
-let expect;
+let expect, token, refreshToken;
 
 chai.use(chaiHttp);
 expect = chai.expect;
@@ -62,6 +63,8 @@ describe("Integration test for user management", () => {
             .end((error, response) => {
                 expect(response).to.have.status(200);
                 expect(response.body).to.have.property("token");
+                token = response.body.token;
+                refreshToken = response.body.refreshToken;
                 done();
             });
     });
@@ -86,6 +89,24 @@ describe("Integration test for user management", () => {
             })
             .end((error, response) => {
                 expect(response).to.have.status(401);
+                done();
+            });
+    });
+    it("Should refresh token", (done) => {
+        chai.request(app)
+            .post("/users/refresh-token")
+            .set("Authorization", "Bearer " + refreshToken)
+            .end((error, response) => {
+                expect(response).to.have.status(200);
+                done();
+            });
+    });
+    it("Should fail refreshing token", (done) => {
+        chai.request(app)
+            .post("/users/refresh-token")
+            .set("Authorization", "Bearer " + token)
+            .end((error, response) => {
+                expect(response).to.have.status(400);
                 done();
             });
     });

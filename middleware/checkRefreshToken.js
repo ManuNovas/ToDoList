@@ -8,7 +8,7 @@ function checkToken(request, response, next){
     try{
         payload = jwt.verify(token, process.env.JWT_SECRET);
         User.findOne({
-            email: payload.username,
+            _id: payload.username,
         }, null, {
             new: true,
         }).then(user => {
@@ -19,7 +19,7 @@ function checkToken(request, response, next){
                 response.status(404).send("El usuario no existe.");
             }
         }).catch(error => {
-            response.status(400).send("El token no es válido");
+            response.status(400).send("El token no es válido.");
         });
     }catch(error){
         console.log(error);

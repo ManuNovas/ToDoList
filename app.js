@@ -5,14 +5,11 @@ var logger = require('morgan');
 
 var app = express();
 
-const dotenv = require('dotenv');
 const usersRouter = require('./routes/users');
 const todosRouter = require('./routes/todos');
 
 const checkToken = require('./middleware/checkToken');
 const limiter = require('./middleware/limiter');
-
-dotenv.config();
 
 const connectDB = require('./config/database');
 connectDB();

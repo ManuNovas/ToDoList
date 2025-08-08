@@ -1,5 +1,6 @@
 require("dotenv").config({path: "./.env.test"});
 process.env.NODE_ENV = "test";
+
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../app");
@@ -22,7 +23,7 @@ describe("Integration test for todo management", () => {
         }], {
             new: true,
         });
-        token = userController.generateToken(user[0]);
+        token = userController.generateToken(user[0].email);
         await Todo.create([
             {
                 user: user[0]._id,
