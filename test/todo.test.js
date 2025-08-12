@@ -4,7 +4,7 @@ process.env.NODE_ENV = "test";
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../app");
-const User = require("../models/User");
+const User = require("../models/user");
 const Todo = require("../models/todo");
 const userController = require("../controllers/userController");
 let expect, user, token, todoID;
